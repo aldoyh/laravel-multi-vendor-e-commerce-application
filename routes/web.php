@@ -40,7 +40,7 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
         Route::get('admins/{type?}', 'AdminController@admins'); // In case the authenticated user (logged-in user) is superadmin, admin, subadmin, vendor these are the three Admin Management URLs depending on the slug. The slug is the `type` column in `admins` table which can only be: superadmin, admin, subadmin, or vendor    // Used an Optional Route Parameters (or Optional Route Parameters) using a '?' question mark sign, for in case that there's no any {type} passed, the page will show ALL superadmins, admins, subadmins and vendors at the same page
         Route::get('view-vendor-details/{id}', 'AdminController@viewVendorDetails'); // View further 'vendor' details inside Admin Management table (if the authenticated user is superadmin, admin or subadmin)
         Route::post('update-admin-status', 'AdminController@updateAdminStatus'); // Update Admin Status using AJAX in admins.blade.php
-    
+
 
         // Sections (Sections, Categories, Subcategories, Products, Attributes)
         Route::get('sections', 'SectionController@sections');
@@ -113,7 +113,7 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
         Route::get('orders', 'OrderController@orders');
 
         // Render admin/orders/order_details.blade.php (View Order Details page) when clicking on the View Order Details icon in admin/orders/orders.blade.php (Orders tab under Orders Management section in Admin Panel)
-        Route::get('orders/{id}', 'OrderController@orderDetails'); 
+        Route::get('orders/{id}', 'OrderController@orderDetails');
 
         // Update Order Status (which is determined by 'admin'-s ONLY, not 'vendor'-s, in contrast to "Update Item Status" which can be updated by both 'vendor'-s and 'admin'-s) (Pending, Shipped, In Progress, Canceled, ...) in admin/orders/order_details.blade.php in Admin Panel
         // Note: The `order_statuses` table contains all kinds of order statuses (that can be updated by 'admin'-s ONLY in `orders` table) like: pending, in progress, shipped, canceled, ...etc. In `order_statuses` table, the `name` column can be: 'New', 'Pending', 'Canceled', 'In Progress', 'Shipped', 'Partially Shipped', 'Delivered', 'Partially Delivered' and 'Paid'. 'Partially Shipped': If one order has products from different vendors, and one vendor has shipped their product to the customer while other vendor (or vendors) didn't!. 'Partially Delivered': if one order has products from different vendors, and one vendor has shipped and DELIVERED their product to the customer while other vendor (or vendors) didn't!    // The `order_item_statuses` table contains all kinds of order statuses (that can be updated by both 'vendor'-s and 'admin'-s in `orders_products` table) like: pending, in progress, shipped, canceled, ...etc.
@@ -125,10 +125,10 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
 
         // Orders Invoices
         // Render order invoice page (HTML) in order_invoice.blade.php
-        Route::get('orders/invoice/{id}', 'OrderController@viewOrderInvoice'); 
+        Route::get('orders/invoice/{id}', 'OrderController@viewOrderInvoice');
 
         // Render order PDF invoice in order_invoice.blade.php using Dompdf Package
-        Route::get('orders/invoice/pdf/{id}', 'OrderController@viewPDFInvoice'); 
+        Route::get('orders/invoice/pdf/{id}', 'OrderController@viewPDFInvoice');
 
         // Shipping Charges module
         // Render the Shipping Charges page (admin/shipping/shipping_charges.blade.php) in the Admin Panel for 'admin'-s only, not for vendors
@@ -138,7 +138,7 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
         Route::post('update-shipping-status', 'ShippingController@updateShippingStatus');
 
         // Render admin/shipping/edit_shipping_charges.blade.php page in case of HTTP 'GET' request ('Edit/Update Shipping Charges'), or hadle the HTML Form submission in the same page in case of HTTP 'POST' request
-        Route::match(['get', 'post'], 'edit-shipping-charges/{id}', 'ShippingController@editShippingCharges'); 
+        Route::match(['get', 'post'], 'edit-shipping-charges/{id}', 'ShippingController@editShippingCharges');
 
 
 
@@ -150,7 +150,7 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
         Route::post('update-subscriber-status', 'NewsletterController@updateSubscriberStatus');
 
         // Delete a Subscriber via AJAX in admin/subscribers/subscribers.blade.php, check admin/js/custom.js
-        Route::get('delete-subscriber/{id}', 'NewsletterController@deleteSubscriber'); 
+        Route::get('delete-subscriber/{id}', 'NewsletterController@deleteSubscriber');
 
 
 
@@ -165,7 +165,7 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
         Route::post('update-rating-status', 'RatingController@updateRatingStatus');
 
         // Delete a Rating via AJAX in admin/ratings/ratings.blade.php, check admin/js/custom.js
-        Route::get('delete-rating/{id}', 'RatingController@deleteRating'); 
+        Route::get('delete-rating/{id}', 'RatingController@deleteRating');
     });
 
 });
@@ -190,8 +190,10 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
 
     // Dynamic Routes for the `url` column in the `categories` table using a foreach loop    // Listing/Categories Routes
     // Important Note: When you run this Laravel project for the first time and if you're running  the "php artisan migrate" command for the first time, before that you must comment out the $catUrls variable and the following foreach loop in web.php file (routes file), because when we run that artisan command, by then the `categories` table has not been created yet, and this causes an error, so make sure to comment out this code in web.php file before running the "php artisan migrate" command for the first time.
+
     $catUrls = \App\Models\Category::select('url')->where('status', 1)->get()->pluck('url')->toArray(); // Routes like: /men, /women, /shirts, ...
     // dd($catUrls);
+
     foreach ($catUrls as $key => $url) {
         // Important Note: When you run this Laravel project for the first time and if you're running  the "php artisan migrate" command for the first time, before that you must comment out the $catUrls variable and the following foreach loop in web.php file (routes file), because when we run that artisan command, by then the `categories` table has not been created yet, and this causes an error, so make sure to comment out this code in web.php file before running the "php artisan migrate" command for the first time.
         Route::match(['get', 'post'], '/' . $url, 'ProductsController@listing'); // used match() for the HTTP 'GET' requests to render listing.blade.php page and the HTTP 'POST' method for the AJAX request of the Sorting Filter or the HTML Form submission and jQuery for the Sorting Filter WITHOUT AJAX, AND ALSO for submitting the Search Form in listing.blade.php    // e.g.    /men    or    /computers    // Important Note: When you run this Laravel project for the first time and if you're running  the "php artisan migrate" command for the first time, before that you must comment out the $catUrls variable and the following foreach loop in web.php file (routes file), because when we run that artisan command, by then the `categories` table has not been created yet, and this causes an error, so make sure to comment out this code in web.php file before running the "php artisan migrate" command for the first time.
@@ -302,7 +304,7 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
         Route::get('paypal', 'PaypalController@paypal');
 
         // Make a PayPal payment
-        Route::post('pay', 'PaypalController@pay')->name('payment'); 
+        Route::post('pay', 'PaypalController@pay')->name('payment');
 
         // PayPal successful payment
         Route::get('success', 'PaypalController@success');
@@ -317,7 +319,7 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
         Route::get('iyzipay', 'IyzipayController@iyzipay');
 
         // Make an iyzipay payment (redirect the user to iyzico payment gateway with the order details)
-        Route::get('iyzipay/pay', 'IyzipayController@pay'); 
+        Route::get('iyzipay/pay', 'IyzipayController@pay');
     });
 
 });
